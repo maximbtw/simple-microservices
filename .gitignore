@@ -1,0 +1,13 @@
+bin/
+obj/
+
+*.user
+*.suo
+*.DotSettings.user
+
+.idea/
+.vscode/
+.containers/
+
+*.log
+*.tmp".containers/" 

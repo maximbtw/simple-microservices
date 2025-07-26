@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentMigrator"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Media.Contracts\Media.Contracts.csproj" />
+      <ProjectReference Include="..\Platform.Domain\Platform.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

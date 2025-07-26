@@ -1,0 +1,52 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <EnableCentralPackageVersions>true</EnableCentralPackageVersions>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <!-- Централизованные версии NuGet пакетов -->
+        <PackageVersion Include="NLog" Version="6.0.1"/>
+        <PackageVersion Include="NLog.Web.AspNetCore" Version="6.0.1"/>
+        <PackageVersion Include="NLog.Targets.WebService" Version="6.0.1" />
+
+        <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.1"/>
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.1" />
+        
+        <PackageVersion Include="FluentMigrator" Version="7.1.0" />
+        <PackageVersion Include="FluentMigrator.Runner.Core" Version="7.1.0" />
+        <PackageVersion Include="FluentMigrator.Runner.Postgres" Version="7.1.0" />
+
+        <PackageVersion Include="CloudinaryDotNet" Version="1.27.6" />
+
+        <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+        <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+        
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
+
+        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
+        
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.6"/>
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6"/>
+        <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.6" />
+        
+        <PackageVersion Include="protobuf-net" Version="3.2.52" />
+        <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.14.0" />
+        <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+        <PackageVersion Include="Nito.AsyncEx" Version="5.1.2" />
+        
+        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.12.0" />
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+        <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.3" />
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.2" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Quartz" Version="1.12.0-beta.1" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.12.0-beta.1" />
+    </ItemGroup>
+</Project>

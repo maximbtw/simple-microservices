@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CloudinaryDotNet"/>
+        <PackageReference Include="FluentMigrator.Runner.Postgres"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration"/>
+        <PackageReference Include="NLog"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Media.Domain\Media.Domain.csproj" />
+      <ProjectReference Include="..\Platform.Core\Platform.Core.csproj" />
+      <ProjectReference Include="..\Platform.WebApi\Platform.WebApi.csproj" />
+    </ItemGroup>
+    
+</Project>

@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Catalog.Client\Catalog.Client.csproj" />
+      <ProjectReference Include="..\Catalog.Contracts\Catalog.Contracts.csproj" />
+      <ProjectReference Include="..\Media.Client\Media.Client.csproj" />
+      <ProjectReference Include="..\Media.Contracts\Media.Contracts.csproj" />
+      <ProjectReference Include="..\PizzeriaAccounting.Client\PizzeriaAccounting.Client.csproj" />
+      <ProjectReference Include="..\PizzeriaApi.Contracts\PizzeriaApi.Contracts.csproj" />
+      <ProjectReference Include="..\Platform.WebApi\Platform.WebApi.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis"/>
+      <PackageReference Include="protobuf-net"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Res.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Res.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Res.ru.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Res.ru.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Res.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Res.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Res.ru.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Res.ru.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

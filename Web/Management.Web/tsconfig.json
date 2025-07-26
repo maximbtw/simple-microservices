@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "esnext",                // Современный стандарт JS
+    "module": "esnext",                // Используем ES-модули
+    "moduleResolution": "node",        // Разрешение модулей, подходящее для Node.js
+    "strict": true,                    // Включение строгой проверки типов
+    "jsx": "preserve",                 // Оставляем JSX как есть (для Vue, если потребуется)
+    "esModuleInterop": true,           // Совместимость с ES модулями
+    "skipLibCheck": true,              // Пропускаем проверку библиотек
+    "forceConsistentCasingInFileNames": true, // Проверка на совпадение регистра
+    "resolveJsonModule": true,         // Поддержка импорта JSON
+    "allowSyntheticDefaultImports": true, // Импорт без имени
+    "baseUrl": ".",                    // Базовая директория проекта
+    "paths": {
+      "@/*": ["src/*"]                 // Настраиваем алиас @ для папки src
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"                     // Включаем Vue-файлы в компиляцию
+  ],
+  "exclude": ["node_modules", "dist"]  // Исключаем лишние директории
+}

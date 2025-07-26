@@ -1,0 +1,36 @@
+api:
+  enabled: true
+  address: 0.0.0.0:8686
+
+sources:
+  http_logs:
+    type: http_server
+    address: 0.0.0.0:2020
+    decoding:
+      codec: json
+
+transforms:
+  set_index:
+    type: remap
+    inputs: [http_logs]
+    source: |
+      index_str = "log-" + string!(.Subsystem) + "-" + string!(.Logger)
+      .opensearch_index = downcase(kebabcase(index_str))
+
+sinks:
+  opensearch:
+    type: elasticsearch
+    inputs: [set_index]
+    endpoints: [ "http://opensearch:9200" ]
+    mode: "bulk"
+    compression: "none"
+    suppress_type_name: true
+    # Если opensearch не достпуен храним логи в памяти до 5000 событий
+    buffer:
+      type: memory
+      max_events: 5000    
+      when_full: drop_newest
+    data_stream:
+      enabled: false
+    bulk:
+      index: "{{ opensearch_index }}"     

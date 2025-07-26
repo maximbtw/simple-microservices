@@ -1,0 +1,86 @@
+services:
+  # Cache
+  redis:
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+  
+  # Logs
+  vector:
+    image: timberio/vector:0.48.0-debian
+    container_name: vector
+    ports:
+      - "2020:2020"
+    volumes:
+      - ./vector.yaml:/etc/vector/vector.yaml:ro
+    command: ["--config", "/etc/vector/vector.yaml"]
+    networks:
+      - logging_network
+  
+  opensearch:  # curl -k -u admin:test-Qq123123 http://localhost:9200
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - logging_network
+
+  opensearch-dashboards: # curl -k -u admin:test-Qq123123 http://opensearch:9200
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - "OPENSEARCH_SSL_VERIFICATION_MODE=none"
+    networks:
+      - logging_network
+    depends_on:
+      - opensearch
+    
+  # Trace
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    ports:
+      - "4317:4317"  
+    volumes:
+        - ./otel-config.yaml:/etc/otelcol/config.yaml
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200" 
+      - "9095:9095"
+      - "4318:4318"
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - ./tempo-data:/tmp/tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+        
+networks:
+  logging_network:
+
+volumes:
+  opensearch_data: 

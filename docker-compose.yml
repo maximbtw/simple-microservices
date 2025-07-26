@@ -1,0 +1,281 @@
+services:
+  # Cache
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  
+  # Logs collector
+  vector:
+    image: timberio/vector:0.48.0-debian
+    container_name: vector
+    ports:
+      - "2020:2020"
+    volumes:
+      - ./vector.yaml:/etc/vector/vector.yaml:ro
+    command: ["--config", "/etc/vector/vector.yaml"]
+    
+  # Trace and Metrics collector
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    ports:
+      - "4317:4317"
+    volumes:
+      - ./otel-config.yaml:/etc/otelcol/config.yaml
+  
+  # Logs storage
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+
+  # Logs visualization
+  opensearch-dashboards: 
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - "OPENSEARCH_SSL_VERIFICATION_MODE=none"
+    depends_on:
+      - opensearch
+
+  # Traces storage
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200"
+      - "9095:9095"
+      - "4318:4318"
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - ./tempo-data:/tmp/tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+
+  # Traces visualization
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  # Auth Service
+  auth:
+    container_name: auth
+    build:
+      context: .
+      dockerfile: Auth.WebApi/Dockerfile
+    ports:
+      - "1050:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - authDb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  authDb:
+    image: postgres
+    container_name: auth.db
+    restart: always
+    ports:
+      - "1055:5432"  
+    environment:
+      - POSTGRES_DB=auth-prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  # Catalog Service
+  catalog:
+    container_name: catalog
+    build:
+      context: .
+      dockerfile: Catalog.WebApi/Dockerfile
+    ports:
+      - "2050:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - catalogDb
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  catalogDb:
+    image: postgres
+    container_name: catalog.db
+    restart: always
+    ports:
+      - "2055:5432"
+    environment:
+      - POSTGRES_DB=catalog-prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - catalog-db-data:/var/lib/postgresql/data
+
+  # PizzeriaAccounting Service
+  pizzeriaAccounting:
+    container_name: pizzeria.accounting
+    build:
+      context: .
+      dockerfile: PizzeriaAccounting.WebApi/Dockerfile
+    ports:
+      - "3050:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - pizzeriaAccountingDb
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  pizzeriaAccountingDb:
+    image: postgres
+    container_name: pizzeriaAccounting.db
+    restart: always
+    ports:
+      - "3055:5432"
+    environment:
+      - POSTGRES_DB=pizzeria-accounting-prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - pizzeriaAccounting-db-data:/var/lib/postgresql/data
+
+  # Media Service
+  media:
+    container_name: media
+    build:
+      context: .
+      dockerfile: Media.WebApi/Dockerfile
+    ports:
+      - "4050:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - mediaDb
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mediaDb:
+    image: postgres
+    container_name: media.db
+    restart: always
+    ports:
+      - "4055:5432"
+    environment:
+      - POSTGRES_DB=media-prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - media-db-data:/var/lib/postgresql/data
+
+  # Pizzeria API
+  pizzeriaApi:
+    container_name: pizzeria-api
+    build:
+      context: .
+      dockerfile: PizzeriaApi.WebApi/Dockerfile
+    ports:
+      - "5055:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  
+  # Web
+  managementWeb:
+    container_name: management.web
+    build:
+      context: ./Web/Management.Web
+      dockerfile: Dockerfile
+    image: management-web
+    volumes:
+      - web_dist:/app/dist  
+    ports:
+      - "6055:8080" 
+    restart: unless-stopped
+    
+  nginx:
+    container_name: nginx
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./Web/Management.Web/dist:/usr/share/nginx/html:ro 
+
+volumes:
+  opensearch_data:
+  auth-db-data:
+  catalog-db-data:
+  pizzeriaAccounting-db-data:
+  media-db-data:
+  web_dist:
