@@ -26,7 +26,7 @@ All services export log and traces (metrics in progress) via collectors to:
 1. Clone:
 
    ```bash
-   git clone https://github.com/maximbtw/pizzeria-microservice-system.git
+   git clone https://github.com/maximbtw/simple-microservices.git
    cd simple-microservices
 
 2. Build:
