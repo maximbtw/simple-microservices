@@ -10,7 +10,7 @@ The `Management.Web` frontend communicates with the `PizzeriaApi`, which orchest
 
 - `Catalog` (PostgreSQL)
 - `Media` (PostgreSQL + Cloudinary)
-- `PizzeriaAccounting`
+- `PizzeriaAccounting`(PostgreSQL)
 - Redis (for caching)
 
 All services export log and traces (metrics in progress) via collectors to:
